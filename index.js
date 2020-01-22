@@ -3,9 +3,12 @@ const ImageParser = require('./src/ImageParser');
 const ImageCompressor = require('./src/ImageCompressor');
 
 const imageParser = new ImageParser();
-const imageCompressor = new ImageCompressor('average', 2);
+const imageCompressor = new ImageCompressor('top-left', 2);
 
-const filePath = 'images/test1_8bit.bmp';
+const filePath = 'images/test1.bmp';
+
+const templatesPath = process.env.TEMPLATES_PATH;
+const imagesPath = process.env.IMAGES_PATH;
 
 const generateThumbnail = path => {
   const imageObject = imageParser.parseImageFileToImageObject(path);
@@ -15,8 +18,17 @@ const generateThumbnail = path => {
 
 const writeToHtml = (imagePath, thumbnailFile) => {
   const indexData = `
-  <img id="image" src="../${imagePath}"/>
-  <img id="thumbnail" src="data:image/bmp;base64,${thumbnailFile}"/ >
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Template 1</title>
+    </head>
+    <body>
+    <img id="image" src="../${imagePath}"/>
+      <img id="thumbnail" src="data:image/bmp;base64,${thumbnailFile}"/ >
+    </body>
+    </html> 
   `;
 
   fs.writeFileSync('public/index.html', indexData);
@@ -24,3 +36,12 @@ const writeToHtml = (imagePath, thumbnailFile) => {
 
 const thumbnail = generateThumbnail(filePath);
 writeToHtml(filePath, thumbnail);
+
+
+fs.readdir(templatesPath, function(err, items) {
+  console.log(items);
+
+  for (let i=0; i<items.length; i++) {
+    console.log(items[i]);
+  }
+});
