@@ -24,6 +24,16 @@ class ImageCompressor {
           };
         }
         break;
+      case 'average':
+        if (hasPallet) {
+          throw new Error('Unsupported format (8-bit) for this method. Please use only 24-bit BMP images');
+        }
+        compressedPixel = {
+          r: (pixels[0][0] + pixels[1][0] + pixels[2][0] + pixels[3][0]) / 4,
+          g: (pixels[0][1] + pixels[1][1] + pixels[2][1] + pixels[3][1]) / 4,
+          b: (pixels[0][2] + pixels[1][2] + pixels[2][2] + pixels[3][2]) / 4,
+        };
+        break;
       default:
         compressedPixel = null;
         break;
