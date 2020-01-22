@@ -2,13 +2,12 @@ const fs = require('fs');
 const ImageModel = require('./ImageModel');
 
 class ImageParser {
-
-  parseImageFileToImageObject = (imageFile) => {
+  parseImageFileToImageObject = imageFile => {
     const imageBuffer = fs.readFileSync(imageFile);
     return this.parseImageBufferToImageObject(imageBuffer);
   };
 
-  parseImageBufferToImageObject = (imageBuffer) => {
+  parseImageBufferToImageObject = imageBuffer => {
     const model = new ImageModel();
     const fileHeader = model.bitMapFileHeader;
     const infoHeader = model.bitMapInfoHeader;
@@ -34,7 +33,7 @@ class ImageParser {
       model.colorPallet = imageBuffer.slice(54, fileHeader.pixelDataOffset);
     }
     model.pixelData = imageBuffer.slice(fileHeader.pixelDataOffset);
-console.log(model);
+
     return model;
   };
 
@@ -64,13 +63,12 @@ console.log(model);
     headersBuffer.writeUIntLE(bitMapInfoHeader.totalColors, 46, 4);
     headersBuffer.writeUIntLE(bitMapInfoHeader.importantColors, 50, 4);
 
-
     return Buffer.concat([headersBuffer, colorPalletBuffer, pixelsBuffer]);
   };
 
-  parseImageBufferToBase64 = (imageObject) => {
+  parseImageBufferToBase64 = imageObject => {
     const imageBuffer = this.parseImageObjectToImageBuffer(imageObject);
-    console.log(imageBuffer);
+
     return imageBuffer.toString('base64');
   };
 }

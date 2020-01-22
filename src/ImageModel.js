@@ -6,6 +6,7 @@ class ImageModel {
     reserved2: null,
     pixelDataOffset: null,
   };
+
   bitMapInfoHeader = {
     headerSize: null,
     imageWidth: null,
@@ -19,9 +20,10 @@ class ImageModel {
     totalColors: null,
     importantColors: null,
   };
+
   colorPallet = null;
+
   pixelData = null;
 }
-
 
 module.exports = ImageModel;

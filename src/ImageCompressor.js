@@ -1,6 +1,6 @@
 class ImageCompressor {
-
   compressingMethod;
+
   compressingFactor;
 
   constructor(method, factor) {
@@ -9,13 +9,13 @@ class ImageCompressor {
   }
 
   compressPixels = (pixels, hasPallet = false) => {
-
     let compressedPixel;
 
     switch (this.compressingMethod) {
       case 'top-left':
         if (hasPallet) {
-          compressedPixel = pixels[0];
+          const [firstPixel] = pixels;
+          compressedPixel = firstPixel;
         } else {
           compressedPixel = {
             r: pixels[0][0],
@@ -24,15 +24,8 @@ class ImageCompressor {
           };
         }
         break;
-      case 'average':
-        compressedPixel = {
-          r: (pixels[0][0] + pixels[1][0] + pixels[2][0] + pixels[3][0]) / 4,
-          g: (pixels[0][1] + pixels[1][1] + pixels[2][1] + pixels[3][1]) / 4,
-          b: (pixels[0][2] + pixels[1][2] + pixels[2][2] + pixels[3][2]) / 4,
-        };
-        break;
       default:
-        console.log('Specify compress method');
+        compressedPixel = null;
         break;
     }
 
@@ -50,9 +43,21 @@ class ImageCompressor {
       for (let dW = 0; dW < arrayImageWidth; dW += 6) {
         const pixels = [
           [pixelData[dH * arrayWidth + dW], pixelData[dH * arrayWidth + dW + 1], pixelData[dH * arrayWidth + dW + 2]],
-          [pixelData[dH * arrayWidth + dW + 3], pixelData[dH * arrayWidth + dW + 4], pixelData[dH * arrayWidth + dW + 5]],
-          [pixelData[arrayWidth + dH * arrayWidth + dW], pixelData[arrayWidth + dH * arrayWidth + dW + 1], pixelData[arrayWidth + dH * arrayWidth + dW + 2]],
-          [pixelData[arrayWidth + dH * arrayWidth + dW + 3], pixelData[arrayWidth + dH * arrayWidth + dW + 4], pixelData[arrayWidth + dH * arrayWidth + dW + 5]],
+          [
+            pixelData[dH * arrayWidth + dW + 3],
+            pixelData[dH * arrayWidth + dW + 4],
+            pixelData[dH * arrayWidth + dW + 5],
+          ],
+          [
+            pixelData[arrayWidth + dH * arrayWidth + dW],
+            pixelData[arrayWidth + dH * arrayWidth + dW + 1],
+            pixelData[arrayWidth + dH * arrayWidth + dW + 2],
+          ],
+          [
+            pixelData[arrayWidth + dH * arrayWidth + dW + 3],
+            pixelData[arrayWidth + dH * arrayWidth + dW + 4],
+            pixelData[arrayWidth + dH * arrayWidth + dW + 5],
+          ],
         ];
 
         const { r, g, b } = this.compressPixels(pixels);
@@ -90,34 +95,34 @@ class ImageCompressor {
     return updatedPixelData;
   };
 
-  getPadding = (pixelsPerRow) => {
+  getPadding = pixelsPerRow => {
     const uncoveredPixels = pixelsPerRow % 4;
     return uncoveredPixels === 0 ? 0 : 4 - uncoveredPixels;
   };
 
-  getDeepCopy = (imageObject) => {
+  getDeepCopy = imageObject => {
     return JSON.parse(JSON.stringify(imageObject));
   };
 
   countPadding = (updatedPixelData, bitMapInfoHeader, factor = 1) => {
     const padding = this.getPadding(Math.ceil(bitMapInfoHeader.imageWidth / 2) * factor);
-    //TODO make it shorter
-    for (let i = 0; i < padding; i++) {
+    // TODO make it shorter
+    for (let i = 0; i < padding; i += 1) {
       updatedPixelData.push(0);
     }
   };
 
-  compressImage = (imageObject) => {
-
+  compressImage = imageObject => {
     const { bitMapInfoHeader, colorPallet, pixelData } = imageObject;
 
     const modifiedObject = this.getDeepCopy(imageObject);
 
-    modifiedObject.pixelData = (!colorPallet) ?
-      this.updatePixels24Bit(pixelData, bitMapInfoHeader) :
-      this.updatePixels8Bit(pixelData, bitMapInfoHeader);
+    modifiedObject.pixelData = !colorPallet
+      ? this.updatePixels24Bit(pixelData, bitMapInfoHeader)
+      : this.updatePixels8Bit(pixelData, bitMapInfoHeader);
 
-    modifiedObject.bitMapFileHeader.fileSize = modifiedObject.pixelData.length + modifiedObject.bitMapFileHeader.pixelDataOffset;
+    modifiedObject.bitMapFileHeader.fileSize =
+      modifiedObject.pixelData.length + modifiedObject.bitMapFileHeader.pixelDataOffset;
     modifiedObject.bitMapInfoHeader.imageSize = modifiedObject.pixelData.length;
     modifiedObject.bitMapInfoHeader.imageHeight = Math.ceil(bitMapInfoHeader.imageHeight / this.compressingFactor);
     modifiedObject.bitMapInfoHeader.imageWidth = Math.ceil(bitMapInfoHeader.imageWidth / this.compressingFactor);

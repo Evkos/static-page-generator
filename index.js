@@ -5,10 +5,10 @@ const ImageCompressor = require('./src/ImageCompressor');
 const imageParser = new ImageParser();
 const imageCompressor = new ImageCompressor('top-left', 2);
 
-const filePath = 'images/test1.bmp';
+const filePath = 'images/test1_8bit.bmp';
 
-const generateThumbnail = (filePath) => {
-  const imageObject = imageParser.parseImageFileToImageObject(filePath);
+const generateThumbnail = path => {
+  const imageObject = imageParser.parseImageFileToImageObject(path);
   const compressedImageObject = imageCompressor.compressImage(imageObject);
   return imageParser.parseImageBufferToBase64(compressedImageObject);
 };
@@ -19,10 +19,7 @@ const writeToHtml = (imagePath, thumbnailFile) => {
   <img id="thumbnail" src="data:image/bmp;base64,${thumbnailFile}"/ >
   `;
 
-  fs.writeFile('public/index.html', indexData, function(err) {
-    if (err) throw err;
-    console.log('File is created successfully.');
-  });
+  fs.writeFileSync('public/index.html', indexData);
 };
 
 const thumbnail = generateThumbnail(filePath);
