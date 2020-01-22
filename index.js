@@ -5,7 +5,7 @@ const ImageCompressor = require('./src/ImageCompressor');
 const imageParser = new ImageParser();
 const imageCompressor = new ImageCompressor('top-left', 2);
 
-const filePath = 'images/test1_8bit.bmp';
+const filePath = 'images/rectangle14x10_24bit.bmp';
 
 const generateThumbnail = path => {
   const imageObject = imageParser.parseImageFileToImageObject(path);
