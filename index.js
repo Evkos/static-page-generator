@@ -39,9 +39,11 @@ writeToHtml(filePath, thumbnail);
 
 
 fs.readdir(templatesPath, function(err, items) {
-  console.log(items);
 
-  for (let i=0; i<items.length; i++) {
-    console.log(items[i]);
-  }
+
+  items.forEach((item) => {
+    const fileBuffer = fs.readFileSync(`${templatesPath}/${item}`);
+    const fileContent = fileBuffer.toString();
+    console.log(fileContent);
+  });
 });
