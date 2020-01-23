@@ -5,10 +5,7 @@ const ImageCompressor = require('./src/ImageCompressor');
 const imageParser = new ImageParser();
 const imageCompressor = new ImageCompressor('top-left', 2);
 
-const filePath = 'images/test1.bmp';
-
 const templatesPath = process.env.TEMPLATES_PATH;
-const imagesPath = process.env.IMAGES_PATH;
 
 const generateThumbnail = path => {
   const imageObject = imageParser.parseImageFileToImageObject(path);
@@ -16,7 +13,16 @@ const generateThumbnail = path => {
   return imageParser.parseImageBufferToBase64(compressedImageObject);
 };
 
-const writeToHtml = (imagePath, thumbnailFile) => {
+const writeToHtml = (item, imagePaths, thumbnailFiles) => {
+
+  const images = imagePaths.reduce((accumulator, imagePath) => {
+    return accumulator.concat(`<img src="../${imagePath}" alt="imagePath"/>`);
+  }, '');
+
+  const thumbnails = thumbnailFiles.reduce((accumulator, thumbnailFile) => {
+    return accumulator.concat(`<img src="data:image/bmp;base64,${thumbnailFile}" alt="thumbnailFile"/>`);
+  }, '');
+
   const indexData = `
     <!DOCTYPE html>
     <html lang="en">
@@ -25,25 +31,36 @@ const writeToHtml = (imagePath, thumbnailFile) => {
         <title>Template 1</title>
     </head>
     <body>
-    <img id="image" src="../${imagePath}"/>
-      <img id="thumbnail" src="data:image/bmp;base64,${thumbnailFile}"/ >
+    ${images}
+    ${thumbnails}
     </body>
     </html> 
   `;
 
-  fs.writeFileSync('public/index.html', indexData);
+  fs.writeFileSync(`public/${item}`, indexData);
 };
 
-const thumbnail = generateThumbnail(filePath);
-writeToHtml(filePath, thumbnail);
+
+fs.readdir(templatesPath, function(err, templates) {
 
 
-fs.readdir(templatesPath, function(err, items) {
+  templates.forEach((template) => {
+    const buffer = fs.readFileSync(`${templatesPath}/${template}`);
+    const content = buffer.toString();
+    const contentParts = content.split('"');
 
+    const imagePaths = [];
+    const thumbnails = [];
+    contentParts.forEach((part) => {
+      if (part.includes('../images')) {
+        imagePaths.push(part.slice(3));
+      }
+    });
 
-  items.forEach((item) => {
-    const fileBuffer = fs.readFileSync(`${templatesPath}/${item}`);
-    const fileContent = fileBuffer.toString();
-    console.log(fileContent);
+    imagePaths.forEach((imagePath) => {
+      thumbnails.push(generateThumbnail(imagePath));
+    });
+
+    writeToHtml(template, imagePaths, thumbnails);
   });
 });

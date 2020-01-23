@@ -1,7 +1,7 @@
 class ImageCompressor {
   compressingMethod;
-
   compressingFactor;
+  bppFactor = 3;
 
   constructor(method, factor) {
     this.compressingMethod = method;
@@ -37,6 +37,7 @@ class ImageCompressor {
       default:
         compressedPixel = null;
         break;
+
     }
 
     return compressedPixel;
@@ -44,13 +45,13 @@ class ImageCompressor {
 
   updatePixels24Bit = (pixelData, bitMapInfoHeader) => {
     const arrayHeight = bitMapInfoHeader.imageHeight;
-    const arrayImageWidth = bitMapInfoHeader.imageWidth * 3;
-    const arrayWidth = bitMapInfoHeader.imageWidth * 3 + this.getPadding(bitMapInfoHeader.imageWidth * 3);
+    const arrayImageWidth = bitMapInfoHeader.imageWidth * this.bppFactor;
+    const arrayWidth = bitMapInfoHeader.imageWidth * this.bppFactor + this.getPadding(bitMapInfoHeader.imageWidth * this.bppFactor);
 
     const updatedPixelData = [];
 
-    for (let dH = 0; dH < arrayHeight; dH += 2) {
-      for (let dW = 0; dW < arrayImageWidth; dW += 6) {
+    for (let dH = 0; dH < arrayHeight; dH += this.compressingFactor) {
+      for (let dW = 0; dW < arrayImageWidth; dW += (this.bppFactor * this.compressingFactor)) {
         const pixels = [
           [pixelData[dH * arrayWidth + dW], pixelData[dH * arrayWidth + dW + 1], pixelData[dH * arrayWidth + dW + 2]],
           [
@@ -87,8 +88,8 @@ class ImageCompressor {
 
     const updatedPixelData = [];
 
-    for (let dH = 0; dH < arrayHeight; dH += 2) {
-      for (let dW = 0; dW < arrayImageWidth; dW += 2) {
+    for (let dH = 0; dH < arrayHeight; dH += this.compressingFactor) {
+      for (let dW = 0; dW < arrayImageWidth; dW += this.compressingFactor) {
         const pixels = [
           pixelData[dH * arrayWidth + dW],
           pixelData[dH * arrayWidth + dW + 1],
@@ -114,8 +115,8 @@ class ImageCompressor {
     return JSON.parse(JSON.stringify(imageObject));
   };
 
-  countPadding = (updatedPixelData, bitMapInfoHeader, factor = 1) => {
-    const padding = this.getPadding(Math.ceil(bitMapInfoHeader.imageWidth / 2) * factor);
+  countPadding = (updatedPixelData, bitMapInfoHeader, multiplier = 1) => {
+    const padding = this.getPadding(Math.ceil(bitMapInfoHeader.imageWidth / this.compressingFactor) * multiplier);
     // TODO make it shorter
     for (let i = 0; i < padding; i += 1) {
       updatedPixelData.push(0);
