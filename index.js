@@ -7,10 +7,9 @@ const imageCompressor = new ImageCompressor('top-left', 2);
 
 const templatesPath = process.env.TEMPLATES_PATH;
 
-const generateThumbnail = (thumbnails, image) => {
-  const imageObject = imageParser.parseImageFileToImageObject(image.src);
+const generateThumbnail = async (thumbnails, image) => {
+  const imageObject = await imageParser.parseImageFileToImageObject(image.src);
   const compressedImageObject = imageCompressor.compressImage(imageObject);
-
   thumbnails.push({
     src: imageParser.parseImageBufferToBase64(compressedImageObject),
     alt: image.alt,
@@ -58,10 +57,10 @@ fs.readdir(templatesPath, function(err, templates) {
       });
 
       images.forEach((image) => {
-        generateThumbnail(thumbnails, image);
+        generateThumbnail(thumbnails, image).then(() => {
+          writeToHtml(templateName, content, images, thumbnails);
+        });
       });
-
-      writeToHtml(templateName, content, images, thumbnails);
     });
 
   });
