@@ -7,60 +7,70 @@ const imageCompressor = new ImageCompressor('top-left', 2);
 
 const templatesPath = process.env.TEMPLATES_PATH;
 
-const generateThumbnail = path => {
-  const imageObject = imageParser.parseImageFileToImageObject(path);
+const generateThumbnail = image => {
+  const imageObject = imageParser.parseImageFileToImageObject(image.src);
   const compressedImageObject = imageCompressor.compressImage(imageObject);
-  return imageParser.parseImageBufferToBase64(compressedImageObject);
+  return {
+    src: imageParser.parseImageBufferToBase64(compressedImageObject),
+    alt: image.alt,
+  };
 };
 
-const writeToHtml = (item, imagePaths, thumbnailFiles) => {
+const writeToHtml = (name, content, imagePaths, thumbnailFiles) => {
 
   const images = imagePaths.reduce((accumulator, imagePath) => {
-    return accumulator.concat(`<img src="../${imagePath}" alt="imagePath"/>`);
+    return accumulator.concat(`<img src="../${imagePath.src}" alt="${imagePath.alt}"/>`);
   }, '');
 
   const thumbnails = thumbnailFiles.reduce((accumulator, thumbnailFile) => {
-    return accumulator.concat(`<img src="data:image/bmp;base64,${thumbnailFile}" alt="thumbnailFile"/>`);
+    return accumulator.concat(`<img src="data:image/bmp;base64,${thumbnailFile.src}" alt="${thumbnailFile.alt}"/>`);
   }, '');
 
-  const indexData = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Template 1</title>
-    </head>
-    <body>
-    ${images}
-    ${thumbnails}
-    </body>
-    </html> 
-  `;
+  console.log(images);
+  console.log(thumbnails);
 
-  fs.writeFileSync(`public/${item}`, indexData);
+  const indexData = content.replace(/{{(.*)}}/gs, `${images}${thumbnails}`);
+  //console.log(indexData)
+  fs.writeFile(`public/${name}`, indexData, (error) => {
+  });
 };
 
 
 fs.readdir(templatesPath, function(err, templates) {
 
+  templates.forEach((templateName) => {
 
-  templates.forEach((template) => {
-    const buffer = fs.readFileSync(`${templatesPath}/${template}`);
+    const buffer = fs.readFileSync(`${templatesPath}/${templateName}`);
     const content = buffer.toString();
-    const contentParts = content.split('"');
 
-    const imagePaths = [];
+    const contentParts = content.match(/<(.*)>/g);
+
+    //console.log(contentParts);
+
+    const images = [];
     const thumbnails = [];
+
     contentParts.forEach((part) => {
-      if (part.includes('../images')) {
-        imagePaths.push(part.slice(3));
+      //console.log(part)
+      const partArray = part.match(/src="..\/(.*)" alt="(.*)"/);
+      //console.log(partArray);
+      if (partArray) {
+        const imageObject = {
+          src: partArray[1],
+          alt: partArray[2],
+        };
+        images.push(imageObject);
       }
+
+
     });
 
-    imagePaths.forEach((imagePath) => {
-      thumbnails.push(generateThumbnail(imagePath));
+
+    images.forEach((image) => {
+      thumbnails.push(generateThumbnail(image));
     });
 
-    writeToHtml(template, imagePaths, thumbnails);
+
+    writeToHtml(templateName, content, images, thumbnails);
   });
 });
