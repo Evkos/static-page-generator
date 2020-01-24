@@ -7,13 +7,14 @@ const imageCompressor = new ImageCompressor('top-left', 2);
 
 const templatesPath = process.env.TEMPLATES_PATH;
 
-const generateThumbnail = image => {
+const generateThumbnail = (thumbnails, image) => {
   const imageObject = imageParser.parseImageFileToImageObject(image.src);
   const compressedImageObject = imageCompressor.compressImage(imageObject);
-  return {
+
+  thumbnails.push({
     src: imageParser.parseImageBufferToBase64(compressedImageObject),
     alt: image.alt,
-  };
+  });
 };
 
 const writeToHtml = (name, content, imagePaths, thumbnailFiles) => {
@@ -26,11 +27,8 @@ const writeToHtml = (name, content, imagePaths, thumbnailFiles) => {
     return accumulator.concat(`<img src="data:image/bmp;base64,${thumbnailFile.src}" alt="${thumbnailFile.alt}"/>`);
   }, '');
 
-  console.log(images);
-  console.log(thumbnails);
-
   const indexData = content.replace(/{{(.*)}}/gs, `${images}${thumbnails}`);
-  //console.log(indexData)
+
   fs.writeFile(`public/${name}`, indexData, (error) => {
   });
 };
@@ -39,38 +37,32 @@ const writeToHtml = (name, content, imagePaths, thumbnailFiles) => {
 fs.readdir(templatesPath, function(err, templates) {
 
   templates.forEach((templateName) => {
+    fs.readFile(`${templatesPath}/${templateName}`, (err, buffer) => {
 
-    const buffer = fs.readFileSync(`${templatesPath}/${templateName}`);
-    const content = buffer.toString();
+      const content = buffer.toString();
+      const contentParts = content.match(/<(.*)>/g);
 
-    const contentParts = content.match(/<(.*)>/g);
+      const images = [];
+      const thumbnails = [];
 
-    //console.log(contentParts);
+      contentParts.forEach((part) => {
+        const partArray = part.match(/src="..\/(.*)" alt="(.*)"/);
+        if (partArray) {
+          const imageObject = {
+            src: partArray[1],
+            alt: partArray[2],
+          };
+          images.push(imageObject);
+        }
 
-    const images = [];
-    const thumbnails = [];
+      });
 
-    contentParts.forEach((part) => {
-      //console.log(part)
-      const partArray = part.match(/src="..\/(.*)" alt="(.*)"/);
-      //console.log(partArray);
-      if (partArray) {
-        const imageObject = {
-          src: partArray[1],
-          alt: partArray[2],
-        };
-        images.push(imageObject);
-      }
+      images.forEach((image) => {
+        generateThumbnail(thumbnails, image);
+      });
 
-
+      writeToHtml(templateName, content, images, thumbnails);
     });
 
-
-    images.forEach((image) => {
-      thumbnails.push(generateThumbnail(image));
-    });
-
-
-    writeToHtml(templateName, content, images, thumbnails);
   });
 });
