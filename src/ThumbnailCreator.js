@@ -6,14 +6,13 @@ const imageCompressor = new ImageCompressor('top-left', 2);
 
 class ThumbnailCreator {
 
-  generateThumbnail = async (imageSet, image) => {
+  generateThumbnail = async (thumbnailsData, image) => {
     const imageObject = await imageParser.parseImageFileToImageObject(image.src);
     const compressedImageObject = imageCompressor.compressImage(imageObject);
-    imageSet.push(
-      image,
+    thumbnailsData.push(
       {
-        type: 'thumbnail',
-        src: imageParser.parseImageBufferToBase64(compressedImageObject),
+        src: image.src,
+        data: imageParser.parseImageBufferToBase64(compressedImageObject),
         alt: image.alt,
       },
     );

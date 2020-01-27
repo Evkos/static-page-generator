@@ -22,12 +22,12 @@ eventEmitter.on('read_template', (templateName) => {
     const content = buffer.toString();
     const contentParts = content.match(/<(.*)>/g);
 
-    const imageSet = [];
-    const images = utils.getImages(contentParts);
+    const thumbnailsData = [];
+    const initialData = utils.getImages(contentParts);
 
-    images.forEach((image) => {
-      thumbnailCreator.generateThumbnail(imageSet, image).then(() => {
-        htmlRenderer.renderHtml(templateName, content, imageSet);
+    initialData.forEach((image) => {
+      thumbnailCreator.generateThumbnail(thumbnailsData, image).then(() => {
+        htmlRenderer.renderHtml(templateName, content, thumbnailsData);
       });
     });
   });

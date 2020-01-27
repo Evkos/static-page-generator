@@ -2,15 +2,19 @@ const fs = require('fs');
 const publicPath = process.env.PUBLIC_PATH;
 
 class HtmlRenderer {
-  renderHtml = (name, content, imageSet) => {
-    const images = imageSet.reduce((result, item) => {
-      if (item.type === 'image') {
-        return result.concat(`<img src="../${item.src}" alt="${item.alt}"/>`);
-      }
-      return result.concat(`<img src="data:image/bmp;base64,${item.src}" alt="${item.alt}"/>`);
-    }, '');
+  renderHtml = (name, content, thumbnailsData) => {
 
-    const indexData = content.replace(/{{(.*)}}/gs, `${images}`);
+    const indexData = content.replace(/{{thumbnail:(.*)}}/g, (match, src) => {
+      const thumbnail = thumbnailsData.find((item) => {
+        if (src === item.src) {
+          return item;
+        }
+      });
+
+      if (thumbnail) {
+        return `<img src="data:image/bmp;base64,${thumbnail.data}" alt="${thumbnail.alt}"/>`;
+      }
+    });
 
     if (!fs.existsSync(publicPath)) {
       fs.mkdirSync(publicPath);

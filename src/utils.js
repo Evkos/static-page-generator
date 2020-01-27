@@ -4,7 +4,6 @@ const getImages = (contentParts) => {
     const partArray = part.match(/src="..\/(.*)" alt="(.*)"/);
     if (partArray) {
       const imageObject = {
-        type: 'image',
         src: partArray[1],
         alt: partArray[2],
       };
