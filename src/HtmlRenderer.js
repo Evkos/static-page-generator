@@ -5,16 +5,17 @@ class HtmlRenderer {
   render = ({ templateName, content, templateImagesData }) => {
     this.generatePublicFolderIfAbsent();
     const filledFileData = this.getFilledFileData(content, templateImagesData);
-    fs.writeFile(`${publicPath}/createdFrom_${templateName}`, filledFileData, () => {});
+    fs.writeFile(`${publicPath}/createdFrom_${templateName}`, filledFileData, () => {
+    });
   };
 
   generatePublicFolderIfAbsent = () => {
     if (!fs.existsSync(publicPath)) {
       fs.mkdirSync(publicPath);
     }
-  }
+  };
 
-  getFilledFileData (content, templateImagesData) {
+  getFilledFileData(content, templateImagesData) {
     return content.replace(/{{thumbnail:(.*)}}/g, (match, src) => {
       const templateImageData = this.getTemplateImageData(templateImagesData, src);
 
@@ -33,7 +34,7 @@ class HtmlRenderer {
       }
       return undefined;
     });
-  }
+  };
 }
 
 module.exports = HtmlRenderer;
