@@ -1,9 +1,9 @@
-const fs = require('fs').promises;
+const fs = require('fs');
 const ImageModel = require('./ImageModel');
 
 class ImageParser {
-  parseImageFileToImageObject = async imageFile => {
-    const imageBuffer = await fs.readFile(imageFile);
+  parseImageFileToImageObject = imageFile => {
+    const imageBuffer = fs.readFileSync(imageFile);
     return this.parseImageBufferToImageObject(imageBuffer);
   };
 
