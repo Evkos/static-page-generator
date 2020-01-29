@@ -4,8 +4,6 @@ const EventHandlers = require('./EventHandlers');
 const eventEmitter = new events.EventEmitter();
 
 
-
-
 class TemplatesProcessor {
 
   templatesPath;
@@ -16,6 +14,10 @@ class TemplatesProcessor {
 
   run = () => {
     fs.readdir(this.templatesPath, (err, templates) => {
+      if (err) {
+        console.error(err.stack);
+        return
+      }
       templates.forEach((templateName) => {
         eventEmitter.emit('template_name_read', templateName);
       });

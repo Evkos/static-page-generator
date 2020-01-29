@@ -5,7 +5,10 @@ class HtmlRenderer {
   render = ({ templateName, content, templateImagesData }) => {
     this.generatePublicFolderIfAbsent();
     const filledFileData = this.getFilledFileData(content, templateImagesData);
-    fs.writeFile(`${publicPath}/createdFrom_${templateName}`, filledFileData, () => {
+    fs.writeFile(`${publicPath}/createdFrom_${templateName}`, filledFileData, (err) => {
+      if (err) {
+        console.error(err.stack);
+      }
     });
   };
 

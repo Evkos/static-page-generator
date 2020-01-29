@@ -20,7 +20,10 @@ class EventHandlers {
 
     this.eventEmitter.on('template_name_read', (templateName) => {
       fs.readFile(`${templatesPath}/${templateName}`, (err, buffer) => {
-        // TODO Create error handler
+        if (err) {
+          console.error(err.stack);
+          return;
+        }
         const templateModel = new TemplateModel();
         templateModel.templateName = templateName;
         templateModel.content = buffer.toString();
