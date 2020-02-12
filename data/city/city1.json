@@ -1,0 +1,23 @@
+{
+  "slug": "city/city1",
+  "meta": {
+    "title": "City 1",
+    "description": "this is city 1"
+  },
+  "title": "Our first city",
+  "content": "<h2>This is first city</h2><div> some content</div>",
+  "images": {
+    "featuredImage": {
+      "src": "../images/rectangle_24bit.bmp",
+      "alt":"t1 rectangle 24bit"
+    },
+    "additionalImage": {
+      "src": "../images/test1.bmp",
+      "alt":"t2 test1 - should be present"
+    },
+    "bonus": {
+      "src": "../images/square_24bit.bmp",
+      "alt":"square image"
+    }
+  }
+}
