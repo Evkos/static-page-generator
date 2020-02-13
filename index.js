@@ -1,10 +1,8 @@
-const templatesPath = process.env.TEMPLATES_PATH;
+const StaticPageGenerator = require('./src/StaticPageGenerator');
+const staticPageGenerator = new StaticPageGenerator();
 
-const TemplateProcessor = require('./src/TemplatesProcessor');
-const templatesProcessor = new TemplateProcessor(templatesPath);
+staticPageGenerator.run();
 
-templatesProcessor.run();
-templatesProcessor.setEventHandlers();
 
 
 
