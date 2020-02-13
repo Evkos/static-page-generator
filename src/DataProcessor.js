@@ -30,6 +30,9 @@ class DataProcessor {
         console.error(err.stack);
         return;
       }
+
+
+      console.log('__________________________________________________________get data', dataFile)
       const dataObject = JSON.parse(buffer.toString());
       this.eventEmitter.emit('data_loaded', dataObject);
     });
