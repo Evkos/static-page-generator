@@ -1,17 +1,16 @@
+const Processor = require('./Processor');
 const fs = require('fs');
 
-class TemplatesProcessor {
+class TemplatesProcessor extends Processor {
 
-  templatesPath;
-  eventEmitter;
+  eventEmitter = super.getEventEmitter();
 
-  constructor(templatesPath, eventEmitter) {
+  constructor(templatesPath) {
+    super();
     this.templatesPath = templatesPath;
-    this.eventEmitter = eventEmitter;
   }
 
   run = () => {
-
     fs.readdir(this.templatesPath, (err, templates) => {
       if (err) {
         console.error(err.stack);
@@ -29,7 +28,7 @@ class TemplatesProcessor {
         console.error(err.stack);
         return;
       }
-console.log('__________________________________________________________read template', templateName)
+      console.log('__________________________________________________________read template', templateName);
       const templateStructure = buffer.toString();
       this.eventEmitter.emit('template_structure_loaded', templateStructure);
     });

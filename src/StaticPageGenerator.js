@@ -1,14 +1,18 @@
-const TemplateProcessor = require('./TemplatesProcessor');
-const DataProcessor = require('./DataProcessor');
-const HTMLProcessor = require('./HTMLProcessor');
-const events = require('events');
+const {
+  Processor,
+  TemplateProcessor,
+  DataProcessor,
+  HTMLProcessor,
+} = require('./processors');
 
-const eventEmitter = new events.EventEmitter();
+const processor = new Processor();
+const eventEmitter = processor.getEventEmitter();
+
 const templatesPath = process.env.TEMPLATES_PATH;
 
-const templatesProcessor = new TemplateProcessor(templatesPath, eventEmitter);
-const dataProcessor = new DataProcessor(eventEmitter);
-const htmlProcessor = new HTMLProcessor(eventEmitter, templatesProcessor);
+const templatesProcessor = new TemplateProcessor(templatesPath);
+const dataProcessor = new DataProcessor();
+const htmlProcessor = new HTMLProcessor(templatesProcessor);
 
 
 class StaticPageGenerator {
@@ -24,6 +28,7 @@ class StaticPageGenerator {
     });
 
     eventEmitter.on('data_loaded', (dataObject) => {
+
       htmlProcessor.run(dataObject);
     });
   };

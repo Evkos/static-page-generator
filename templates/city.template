@@ -1,3 +1,4 @@
+CITY TEMPLATE
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,5 +11,9 @@
     <article>{{content}}</article>
     {{image:featuredImage}}
     {{thumbnail:featuredImage}}
+    {{image:additionalImage}}
+    {{thumbnail:additionalImage}}
+    {{image:bonusImage}}
+    {{thumbnail:bonusImage}}
 </body>
 </html>

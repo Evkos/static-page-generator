@@ -1,17 +1,18 @@
 const fs = require('fs');
+const Processor = require('./Processor');
 
-class HTMLProcessor {
+class HTMLProcessor extends Processor {
 
-  eventEmitter;
-  templatesProcessor;
+  eventEmitter = super.getEventEmitter();
 
-  constructor(eventEmitter, templatesProcessor) {
-    this.eventEmitter = eventEmitter;
+  constructor(templatesProcessor) {
+    super();
     this.templatesProcessor = templatesProcessor;
   }
 
 
   run = (data) => {
+    //console.log(data);
     this.setEvents(data);
     const currentTemplateName = this.getCurrentTemplateName(data.slug);
     this.templatesProcessor.getTemplateStructure(currentTemplateName);
@@ -29,13 +30,17 @@ class HTMLProcessor {
 
   };
 
+  createHTML = (templateStructure, data) => {
+
+  };
+
   getCurrentTemplateName = (slug) => {
-    return `${slug.split('/')[0]}.html`;
+    return `${slug.split('/')[0]}.template`;
   };
 
   setEvents = (data) => {
     this.eventEmitter.on('template_structure_loaded', (templateStructure) => {
-      console.log(templateStructure, data);
+      this.createHTML(templateStructure, data);
     });
   };
 }

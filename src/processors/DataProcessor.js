@@ -1,12 +1,9 @@
 const fs = require('fs');
+const Processor = require('./Processor');
 
-class DataProcessor {
+class DataProcessor extends Processor{
 
-  eventEmitter;
-
-  constructor(eventEmitter) {
-    this.eventEmitter = eventEmitter;
-  }
+  eventEmitter = super.getEventEmitter();
 
   run = (templateName) => {
 
@@ -30,9 +27,7 @@ class DataProcessor {
         console.error(err.stack);
         return;
       }
-
-
-      console.log('__________________________________________________________get data', dataFile)
+      console.log('__________________________________________________________get data', dataFile);
       const dataObject = JSON.parse(buffer.toString());
       this.eventEmitter.emit('data_loaded', dataObject);
     });
