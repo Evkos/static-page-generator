@@ -10,37 +10,45 @@ class HTMLProcessor extends Processor {
     this.templatesProcessor = templatesProcessor;
   }
 
-
   run = (data) => {
-    //console.log(data);
     this.setEvents(data);
-    const currentTemplateName = this.getCurrentTemplateName(data.slug);
-    this.templatesProcessor.getTemplateStructure(currentTemplateName);
+    this.templatesProcessor.loadTemplateStructureBySlug(data.slug);
+  };
 
-
-    /*const path = this.data.slug.split('/');
-
-    fs.mkdirSync(`public/${path[0]}`, { recursive: true });
-    fs.writeFile(`public/${path[0]}/${path[1]}.html`, this.data.title, (err) => {
+  render = (structure, data) => {
+    this.createFolder(data);
+    const path = data.slug.split('/');
+    const filledFileData = this.getFilledFileData(structure, data);
+    fs.writeFile(`public/${path[0]}/${path[1]}.html`, filledFileData, (err) => {
       if (err) {
         console.error(err.stack);
       }
-    });*/
+    });
+  };
+
+  getFilledFileData = (structure, data) => {
+
+    for (let prop in data) {
+     // console.log('obj.' + prop + ' = ' + data[prop]);
+      return structure.replace(/{{(.*)}}/g, (match, key) => {
+        return data[key]
+      });
+
+
+    }
 
 
   };
 
-  createHTML = (templateStructure, data) => {
-
+  createFolder = (data) => {
+    const path = data.slug.split('/');
+    fs.mkdirSync(`public/${path[0]}`, { recursive: true });
   };
 
-  getCurrentTemplateName = (slug) => {
-    return `${slug.split('/')[0]}.template`;
-  };
 
   setEvents = (data) => {
     this.eventEmitter.on('template_structure_loaded', (templateStructure) => {
-      this.createHTML(templateStructure, data);
+      this.render(templateStructure, data);
     });
   };
 }

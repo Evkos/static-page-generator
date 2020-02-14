@@ -22,7 +22,8 @@ class TemplatesProcessor extends Processor {
     });
   };
 
-  getTemplateStructure = (templateName) => {
+  loadTemplateStructureBySlug = (slug) => {
+    const templateName = this.getCurrentTemplateName(slug);
     fs.readFile(`${this.templatesPath}/${templateName}`, (err, buffer) => {
       if (err) {
         console.error(err.stack);
@@ -32,6 +33,10 @@ class TemplatesProcessor extends Processor {
       const templateStructure = buffer.toString();
       this.eventEmitter.emit('template_structure_loaded', templateStructure);
     });
+  };
+
+  getCurrentTemplateName = (slug) => {
+    return `${slug.split('/')[0]}.template`;
   };
 }
 
