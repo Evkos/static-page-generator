@@ -8,7 +8,7 @@
   "content": "<h2>This is first article designed for test</h2><div> some content</div>",
   "images": {
     "featuredImage": {
-      "src": "../images/rectangle_24bit.bmp",
+      "src": "images/rectangle_24bit.bmp",
       "alt":"t1 rectangle 24bit"
     }
   }

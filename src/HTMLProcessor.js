@@ -1,18 +1,13 @@
 const fs = require('fs');
-const Processor = require('./Processor');
+const TemplatesProcessor = require('./TemplatesProcessor');
 
-class HTMLProcessor extends Processor {
+const templatesProcessor = new TemplatesProcessor(null);
 
-  eventEmitter = super.getEventEmitter();
-
-  constructor(templatesProcessor) {
-    super();
-    this.templatesProcessor = templatesProcessor;
-  }
+class HTMLProcessor {
 
   run = (data) => {
-    this.setEvents(data);
-    this.templatesProcessor.loadTemplateStructureBySlug(data.slug);
+    const templateStructure = templatesProcessor.getTemplateStructureBySlug(data.slug);
+    this.render(templateStructure, data);
   };
 
   render = (structure, data) => {
@@ -27,29 +22,16 @@ class HTMLProcessor extends Processor {
   };
 
   getFilledFileData = (structure, data) => {
-
     for (let prop in data) {
-     // console.log('obj.' + prop + ' = ' + data[prop]);
       return structure.replace(/{{(.*)}}/g, (match, key) => {
-        return data[key]
+        return data[key];
       });
-
-
     }
-
-
   };
 
   createFolder = (data) => {
     const path = data.slug.split('/');
     fs.mkdirSync(`public/${path[0]}`, { recursive: true });
-  };
-
-
-  setEvents = (data) => {
-    this.eventEmitter.on('template_structure_loaded', (templateStructure) => {
-      this.render(templateStructure, data);
-    });
   };
 }
 

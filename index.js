@@ -1,7 +1,8 @@
-const StaticPageGenerator = require('./src/StaticPageGenerator');
-const staticPageGenerator = new StaticPageGenerator();
+const GenerationProcess = require('./src/GenerationProcess');
 
-staticPageGenerator.run();
+const generationProcess = new GenerationProcess()
+generationProcess.start();
+
 
 
 

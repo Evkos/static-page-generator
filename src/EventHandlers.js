@@ -1,6 +1,6 @@
 const fs = require('fs');
 const TemplateModel = require('./TemplateModel');
-const ThumbnailCreator = require('./ThumbnailCreator');
+const ThumbnailCreator = require('./thumbnailsCreator/ThumbnailCreator');
 const HtmlRenderer = require('./HtmlRenderer');
 const utils = require('./utils');
 
