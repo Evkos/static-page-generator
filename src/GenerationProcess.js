@@ -4,16 +4,16 @@ const fs = require('fs');
 
 const DataLoader = require('./DataLoader');
 const DataEnricher = require('./DataEnricher');
-const HTMLProcessor = require('./HTMLProcessor');
+const HTMLRenderer = require('./HTMLRenderer');
 
 const eventEmitter = new events.EventEmitter();
 const dataLoader = new DataLoader();
 const dataEnricher = new DataEnricher();
-const htmlProcessor = new HTMLProcessor();
+const htmlRenderer = new HTMLRenderer();
 
 class GenerationProcess {
 
-  constructor () {
+  constructor() {
     this.initEventListeners();
   }
 
@@ -38,11 +38,15 @@ class GenerationProcess {
 
     eventEmitter.on('data_loaded', (dataObject) => {
       const dataRichObject = dataEnricher.run(dataObject);
-      eventEmitter.emit('data_enriched', dataRichObject);
+
+      setTimeout(()=>{
+        eventEmitter.emit('data_enriched', dataRichObject);
+      }, 1)
+
     });
 
     eventEmitter.on('data_enriched', (dataRichObject) => {
-      htmlProcessor.run(dataRichObject);
+      htmlRenderer.render(dataRichObject);
     });
 
   };

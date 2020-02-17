@@ -15,7 +15,7 @@
       "src": "images/test1.bmp",
       "alt":"t2 test1 - should be present"
     },
-    "bonus": {
+    "bonusImage": {
       "src": "images/square_24bit.bmp",
       "alt":"square image"
     }
