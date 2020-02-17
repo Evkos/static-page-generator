@@ -1,7 +1,7 @@
-const GenerationProcess = require('./src/GenerationProcess');
+const PageGenerationProcess = require('./src/PageGenerationProcess');
 
-const generationProcess = new GenerationProcess();
-generationProcess.start();
+const pageGenerationProcess = new PageGenerationProcess();
+pageGenerationProcess.start();
 
 
 

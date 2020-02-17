@@ -2,7 +2,11 @@ const fs = require('fs');
 const templatesPath = process.env.TEMPLATES_PATH;
 class TemplatesProcessor {
 
-  getTemplateStructureBySlug = (slug) => {
+  getTemplatesNames = () => {
+    return fs.readdirSync(templatesPath);
+  };
+
+  getTemplateBySlug = (slug) => {
     const templateName = this.getCurrentTemplateName(slug);
     const buffer = fs.readFileSync(`${templatesPath}/${templateName}`);
     return buffer.toString();
