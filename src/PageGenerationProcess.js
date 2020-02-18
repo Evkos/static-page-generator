@@ -13,16 +13,18 @@ const pageRenderer = new PageRenderer();
 
 class PageGenerationProcess {
 
-  constructor () {
+  constructor() {
     this.initEventListeners();
   }
 
   start = () => {
-    //TODO if path not found, print warning and do nothing
     const templates = templatesProcessor.getTemplatesNames();
-    templates.forEach((templateName) => {
-      eventEmitter.emit('template_read', templateName);
-    });
+    if (templates) {
+      templates.forEach((templateName) => {
+        eventEmitter.emit('template_read', templateName);
+      });
+    }
+
   };
 
   initEventListeners = () => {

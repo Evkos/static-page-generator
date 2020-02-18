@@ -3,13 +3,20 @@ const thumbnailCreator = new ThumbnailCreator();
 
 class PageDataEnricher {
 
-  //TODO add doc-comment that method changes input parameter
+  /**
+   * This method modify input parameter, adding "thumbnail" key
+   * @param pageData
+   * @returns {Promise<*>}
+   */
   addThumbnails = async (pageData) => {
+    if (pageData.images === undefined) {
+      return pageData;
+    }
+
     const images = pageData.images;
-    //TODO redo
-    const imagesKeys = Object.keys(pageData.images === undefined? {}: pageData.images);
+    const imagesKeys = Object.keys(images);
     for (const i in imagesKeys) {
-        images[imagesKeys[i]].thumbnail = await thumbnailCreator.getThumbnail(images[imagesKeys[i]].src);
+      images[imagesKeys[i]].thumbnail = await thumbnailCreator.getThumbnail(images[imagesKeys[i]].src);
     }
     return pageData;
   };

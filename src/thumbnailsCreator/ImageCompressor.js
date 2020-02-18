@@ -117,7 +117,6 @@ class ImageCompressor {
 
   countPadding = (updatedPixelData, bitMapInfoHeader, multiplier = 1) => {
     const padding = this.getPadding(Math.ceil(bitMapInfoHeader.imageWidth / this.compressingFactor) * multiplier);
-    // TODO make it shorter
     for (let i = 0; i < padding; i += 1) {
       updatedPixelData.push(0);
     }

@@ -19,6 +19,7 @@ class PageRenderer {
       if (err) {
         console.error(err.stack);
       }
+      console.log(`Page ${pageName}.html was created successfully`);
     });
   };
 

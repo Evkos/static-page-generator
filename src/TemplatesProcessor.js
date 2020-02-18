@@ -3,7 +3,14 @@ const templatesPath = process.env.TEMPLATES_PATH;
 class TemplatesProcessor {
 
   getTemplatesNames = () => {
-    return fs.readdirSync(templatesPath);
+    try{
+      return fs.readdirSync(templatesPath);
+    }
+    catch{
+      console.error(`Can't find folder '${templatesPath}'`)
+      return false
+    }
+
   };
 
   getTemplateBySlug = (slug) => {
