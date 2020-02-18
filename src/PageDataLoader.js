@@ -1,10 +1,9 @@
 const fs = require('fs');
+
 const dataRootFolderPath = 'data';
 
-
 class PageDataLoader {
-
-  run = (templateName) => {
+  run = templateName => {
     const dataFolderPath = this.getDataFolderPath(templateName);
     const dataFiles = fs.readdirSync(dataFolderPath);
     return this.getPagesData(dataFiles, dataFolderPath);
@@ -25,13 +24,15 @@ class PageDataLoader {
     const buffer = fs.readFileSync(`${dataFolderPath}/${dataFile}`);
     const pageData = JSON.parse(buffer.toString());
     if (pageData.slug.split('/')[0] !== dataFolderPath.split('/')[1]) {
-      console.error(`Folder name '${dataFolderPath.split('/')[1]}' and slug '${pageData.slug.split('/')[0]}' do not matched`);
+      console.error(
+        `Folder name '${dataFolderPath.split('/')[1]}' and slug '${pageData.slug.split('/')[0]}' do not matched`,
+      );
       return false;
     }
     return pageData;
   };
 
-  getDataFolderPath = (templateName) => {
+  getDataFolderPath = templateName => {
     return `${dataRootFolderPath}/${templateName.split('.')[0]}`;
   };
 }

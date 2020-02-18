@@ -6,8 +6,7 @@ const imageCompressor = new ImageCompressor('top-left', 2);
 const thumbnailsCache = [];
 
 class ThumbnailCreator {
-
-  getThumbnail = async (imageSrc) => {
+  getThumbnail = imageSrc => {
     const thumbnail = this.tryGetThumbnailFromCache(imageSrc);
     if (thumbnail) return thumbnail;
 
@@ -17,7 +16,7 @@ class ThumbnailCreator {
     return compressedImageBase64;
   };
 
-   generateThumbnail = (imageSrc) => {
+  generateThumbnail = imageSrc => {
     const imageObject = imageParser.parseImageFileToImageObject(imageSrc);
     const compressedImageObject = imageCompressor.compressImage(imageObject);
     return imageParser.parseImageBufferToBase64(compressedImageObject);
@@ -27,9 +26,9 @@ class ThumbnailCreator {
     thumbnailsCache[imageSrc] = compressedImageBase64;
   };
 
-  tryGetThumbnailFromCache = (imageSrc) => {
+  tryGetThumbnailFromCache = imageSrc => {
     return thumbnailsCache[imageSrc];
-  }
+  };
 }
 
 module.exports = ThumbnailCreator;

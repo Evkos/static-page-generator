@@ -1,6 +1,8 @@
 class ImageCompressor {
   compressingMethod;
+
   compressingFactor;
+
   bppFactor = 3;
 
   constructor(method, factor) {
@@ -37,7 +39,6 @@ class ImageCompressor {
       default:
         compressedPixel = null;
         break;
-
     }
 
     return compressedPixel;
@@ -46,12 +47,13 @@ class ImageCompressor {
   updatePixels24Bit = (pixelData, bitMapInfoHeader) => {
     const arrayHeight = bitMapInfoHeader.imageHeight;
     const arrayImageWidth = bitMapInfoHeader.imageWidth * this.bppFactor;
-    const arrayWidth = bitMapInfoHeader.imageWidth * this.bppFactor + this.getPadding(bitMapInfoHeader.imageWidth * this.bppFactor);
+    const arrayWidth =
+      bitMapInfoHeader.imageWidth * this.bppFactor + this.getPadding(bitMapInfoHeader.imageWidth * this.bppFactor);
 
     const updatedPixelData = [];
 
     for (let dH = 0; dH < arrayHeight; dH += this.compressingFactor) {
-      for (let dW = 0; dW < arrayImageWidth; dW += (this.bppFactor * this.compressingFactor)) {
+      for (let dW = 0; dW < arrayImageWidth; dW += this.bppFactor * this.compressingFactor) {
         const pixels = [
           [pixelData[dH * arrayWidth + dW], pixelData[dH * arrayWidth + dW + 1], pixelData[dH * arrayWidth + dW + 2]],
           [
