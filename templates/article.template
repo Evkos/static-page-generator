@@ -7,7 +7,9 @@
 </head>
 <body>
     <img id="image1" src="../../images/square14x14_8bit.bmp" alt="image directly from template"/>
+    {{templateImage:image1}}
     <img id="image2" src="../../images/rectangle14x10_24bit.bmp" alt="another image directly from template"/>
+    {{templateImage:image2}}
     <h1>{{title}}</h1>
     <article>{{content}}</article>
     {{image:featuredImage}}
