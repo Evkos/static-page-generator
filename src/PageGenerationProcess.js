@@ -32,29 +32,30 @@ class PageGenerationProcess {
     eventEmitter.on('template_read', templateName => {
       const template = templatesProcessor.getTemplateByName(templateName);
       const templateImages = templatesProcessor.getTemplateImages(template);
-      eventEmitter.emit('template_data_loaded', templateImages);
+      eventEmitter.emit('template_data_loaded', templateImages, templateName);
     });
 
-    eventEmitter.on('template_data_loaded', async templateImages => {
-      const templateDataRichObject = await dataEnricher.addTemplateDataThumbnails(templateImages);
-      eventEmitter.emit('template_data_enriched', templateDataRichObject);
+    eventEmitter.on('template_data_loaded', async (templateImages, templateName) => {
+      const templateRichData = await dataEnricher.addThumbnails(templateImages);
+      eventEmitter.emit('template_data_enriched', templateRichData, templateName);
     });
 
 
-    eventEmitter.on('template_read', templateName => {
+    eventEmitter.on('template_data_enriched', (templateRichData, templateName) => {
       const pagesData = pageDataLoader.run(templateName);
       pagesData.forEach(pageData => {
-        eventEmitter.emit('data_loaded', pageData);
+        eventEmitter.emit('page_data_loaded', pageData, templateRichData);
       });
     });
 
-    eventEmitter.on('data_loaded', async pageData => {
-      const dataRichObject = await dataEnricher.addThumbnails(pageData);
-      eventEmitter.emit('data_enriched', dataRichObject);
+    eventEmitter.on('page_data_loaded', async (pageData, templateRichData) => {
+      const pageRichData = await dataEnricher.addThumbnails(pageData);
+      const combinedData = dataEnricher.concatData(templateRichData, pageRichData);
+      eventEmitter.emit('combined_data_loaded', combinedData);
     });
 
-    eventEmitter.on('data_enriched', dataRichObject => {
-      pageRenderer.render(dataRichObject);
+    eventEmitter.on('combined_data_loaded', combinedData => {
+      pageRenderer.render(combinedData);
     });
   };
 }

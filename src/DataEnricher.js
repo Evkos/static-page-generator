@@ -4,12 +4,21 @@ class DataEnricher {
     this.thumbnailCreator = thumbnailCreator;
   }
 
+  addThumbnails = async (data) => {
+    if (data.slug !== undefined) {
+      return await this.addPageDataThumbnails(data);
+    } else {
+      return await this.addTemplateDataThumbnails(data);
+    }
+  };
+
+
   /**
    * This method modify input parameter, adding "thumbnail" key
    * @param pageData
    * @returns {Promise<*>}
    */
-  addThumbnails = async pageData => {
+  addPageDataThumbnails = async pageData => {
     if (pageData.images === undefined) {
       return pageData;
     }
@@ -31,6 +40,11 @@ class DataEnricher {
     }
 
     return templateImages;
+  };
+
+  concatData = (templateData, pageData) => {
+    pageData.templateImages = templateData;
+    return pageData;
   };
 
 }

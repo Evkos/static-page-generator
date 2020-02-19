@@ -6,11 +6,11 @@ class PageRenderer {
     this.templatesProcessor = templatesProcessor;
   }
 
-  render = pageData => {
-    const pagePathParts = pageData.slug.split('/');
+  render = combinedData => {
+    const pagePathParts = combinedData.slug.split('/');
     const outputFolderPath = this.createOutputFolder(pagePathParts[0]);
-    const template = this.templatesProcessor.getTemplateBySlug(pageData.slug);
-    const pageContent = this.createPageContent(template, pageData);
+    const template = this.templatesProcessor.getTemplateBySlug(combinedData.slug);
+    const pageContent = this.createPageContent(template, combinedData);
 
     this.createPage(outputFolderPath, pagePathParts[1], pageContent);
   };
@@ -24,50 +24,47 @@ class PageRenderer {
     });
   };
 
-  createPageContent = (template, pageData) => {
+  createPageContent = (template, combinedData) => {
 
     return template.replace(/{{(.*)}}/g, (match, key) => {
+      if (key.includes('templateImage')) {
+        return this.fillFileImagesFromTemplate(combinedData, key);
+      }
       if (key.includes('meta')) {
-        return this.fillFileMetaTags(pageData, key);
+        return this.fillFileMetaTags(combinedData, key);
       }
       if (key.includes('image')) {
-        return this.fillFileImages(pageData, key);
+        return this.fillFileImages(combinedData, key);
       }
       if (key.includes('thumbnail')) {
-        return this.fillFileImages(pageData, key, true);
+        return this.fillFileImages(combinedData, key, true);
       }
-      return pageData[key];
+      return combinedData[key];
     });
   };
 
-  fillFileImagesFromTemplate = (template, templateImages) => {
-    return template.replace(/<img src="(.*)" (.*)>/g, (match, src) => {
-      let currentImage = {};
-      templateImages.forEach((image) => {
-        if (image.src === src) {
-          currentImage = image;
-        }
-      });
-      return `<img src="${currentImage.src}" alt="${currentImage.alt}"/>\n<img src="data:image/gif;base64,${currentImage.thumbnail}" alt="${currentImage.alt}"/>`;
-    });
+  fillFileImagesFromTemplate = (combinedData, key) => {
+    const imageName = key.split(':')[1];
+    const imageSrc = combinedData.templateImages[imageName].thumbnail;
+    return `<img src="data:image/gif;base64,${imageSrc}" alt="${combinedData.templateImages[imageName].alt}"/>`;
   };
 
-  fillFileMetaTags = (pageData, key) => {
+  fillFileMetaTags = (combinedData, key) => {
     let metaTags = '';
-    Object.keys(pageData[key]).forEach(value => {
-      metaTags += `<meta name="${value}" content="${pageData[key][value]}"/>\n`;
+    Object.keys(combinedData[key]).forEach(value => {
+      metaTags += `<meta name="${value}" content="${combinedData[key][value]}"/>\n`;
     });
     return metaTags;
   };
 
-  fillFileImages = (pageData, key, isThumbnail = false) => {
+  fillFileImages = (combinedData, key, isThumbnail = false) => {
     const imageName = key.split(':')[1];
-    if (pageData.images === undefined) {
+    if (combinedData.images === undefined) {
       return '';
     }
-    const imageSrc = isThumbnail ? pageData.images[imageName].thumbnail : pageData.images[imageName].src;
+    const imageSrc = isThumbnail ? combinedData.images[imageName].thumbnail : combinedData.images[imageName].src;
     const imgSrcPrefix = isThumbnail ? 'data:image/gif;base64,' : '../../';
-    return `<img src="${imgSrcPrefix + imageSrc}" alt="${pageData.images[imageName].alt}"/>`;
+    return `<img src="${imgSrcPrefix + imageSrc}" alt="${combinedData.images[imageName].alt}"/>`;
   };
 
   createOutputFolder = outputFolderName => {
