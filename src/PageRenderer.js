@@ -10,8 +10,7 @@ class PageRenderer {
     const pagePathParts = pageData.slug.split('/');
     const outputFolderPath = this.createOutputFolder(pagePathParts[0]);
     const template = this.templatesProcessor.getTemplateBySlug(pageData.slug);
-    const templateImages = this.templatesProcessor.getTemplateImages(template);
-    const pageContent = this.createPageContent(template, pageData, templateImages);
+    const pageContent = this.createPageContent(template, pageData);
 
     this.createPage(outputFolderPath, pagePathParts[1], pageContent);
   };
@@ -25,9 +24,9 @@ class PageRenderer {
     });
   };
 
-  createPageContent = (template, pageData, templateImages) => {
-    const templateWithImages = this.fillFileImagesFromTemplate(template, templateImages);
-    return templateWithImages.replace(/{{(.*)}}/g, (match, key) => {
+  createPageContent = (template, pageData) => {
+
+    return template.replace(/{{(.*)}}/g, (match, key) => {
       if (key.includes('meta')) {
         return this.fillFileMetaTags(pageData, key);
       }

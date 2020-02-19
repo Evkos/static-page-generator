@@ -4,8 +4,9 @@ const templatesPath = process.env.TEMPLATES_PATH;
 class TemplatesProcessor {
 
   constructor(thumbnailCreator) {
-    this.thumbnailCreator = thumbnailCreator
+    this.thumbnailCreator = thumbnailCreator;
   }
+
   getTemplatesNames = () => {
     try {
       return fs.readdirSync(templatesPath);
@@ -17,24 +18,26 @@ class TemplatesProcessor {
 
   getTemplateBySlug = slug => {
     const templateName = this.getCurrentTemplateName(slug);
-    const buffer = fs.readFileSync(`${templatesPath}/${templateName}`);
+    return this.getTemplateByName(templateName);
+  };
+
+  getTemplateByName = name => {
+    const buffer = fs.readFileSync(`${templatesPath}/${name}`);
     return buffer.toString();
   };
 
   getTemplateImages = template => {
-    let templateImages = [];
-    const imagesDataArray = Array.from(template.matchAll(/<img src="(.*)" alt="(.*)"\/>/g));
+    let templateImages = {};
+    const imagesDataArray = Array.from(template.matchAll(/<img id="(.*)" src="..\/..\/(.*)" alt="(.*)"\/>/g));
 
     if (imagesDataArray) {
       for (const imageData of imagesDataArray) {
-        templateImages.push({
-          src: imageData[1],
-          alt: imageData[2],
-          thumbnail: this.thumbnailCreator.getThumbnail(imageData[1].substring(6))
-        }) ;
+        templateImages[imageData[1]] = {
+          src: imageData[2],
+          alt: imageData[3],
+        };
       }
     }
-
     return templateImages;
   };
 

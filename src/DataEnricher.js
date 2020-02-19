@@ -1,8 +1,9 @@
-class PageDataEnricher {
+class DataEnricher {
 
   constructor(thumbnailCreator) {
-    this.thumbnailCreator = thumbnailCreator
+    this.thumbnailCreator = thumbnailCreator;
   }
+
   /**
    * This method modify input parameter, adding "thumbnail" key
    * @param pageData
@@ -20,6 +21,18 @@ class PageDataEnricher {
 
     return pageData;
   };
+
+  addTemplateDataThumbnails = async templateImages => {
+    if (templateImages == undefined) {
+      return templateImages;
+    }
+    for await (const key of Object.keys(templateImages)) {
+      templateImages[key].thumbnail = this.thumbnailCreator.getThumbnail(templateImages[key].src);
+    }
+
+    return templateImages;
+  };
+
 }
 
-module.exports = PageDataEnricher;
+module.exports = DataEnricher;

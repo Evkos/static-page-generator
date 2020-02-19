@@ -1,14 +1,14 @@
 const events = require('events');
 
 const PageDataLoader = require('./PageDataLoader');
-const PageDataEnricher = require('./PageDataEnricher');
+const DataEnricher = require('./DataEnricher');
 const PageRenderer = require('./PageRenderer');
 const TemplatesProcessor = require('./TemplatesProcessor');
 const ThumbnailCreator = require('./ThumbnailCreator');
 
 const thumbnailCreator = new ThumbnailCreator();
 const templatesProcessor = new TemplatesProcessor(thumbnailCreator);
-const pageDataEnricher = new PageDataEnricher(thumbnailCreator);
+const dataEnricher = new DataEnricher(thumbnailCreator);
 const eventEmitter = new events.EventEmitter();
 const pageDataLoader = new PageDataLoader();
 const pageRenderer = new PageRenderer(templatesProcessor);
@@ -28,6 +28,19 @@ class PageGenerationProcess {
   };
 
   initEventListeners = () => {
+
+    eventEmitter.on('template_read', templateName => {
+      const template = templatesProcessor.getTemplateByName(templateName);
+      const templateImages = templatesProcessor.getTemplateImages(template);
+      eventEmitter.emit('template_data_loaded', templateImages);
+    });
+
+    eventEmitter.on('template_data_loaded', async templateImages => {
+      const templateDataRichObject = await dataEnricher.addTemplateDataThumbnails(templateImages);
+      eventEmitter.emit('template_data_enriched', templateDataRichObject);
+    });
+
+
     eventEmitter.on('template_read', templateName => {
       const pagesData = pageDataLoader.run(templateName);
       pagesData.forEach(pageData => {
@@ -36,7 +49,7 @@ class PageGenerationProcess {
     });
 
     eventEmitter.on('data_loaded', async pageData => {
-      const dataRichObject = await pageDataEnricher.addThumbnails(pageData);
+      const dataRichObject = await dataEnricher.addThumbnails(pageData);
       eventEmitter.emit('data_enriched', dataRichObject);
     });
 
