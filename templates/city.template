@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>{{title}}</title>
-    {{meta}}
 </head>
 <body>
     <h1>{{title}}</h1>

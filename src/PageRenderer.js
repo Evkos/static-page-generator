@@ -26,12 +26,11 @@ class PageRenderer {
 
   createPageContent = (template, combinedData) => {
 
-    return template.replace(/{{(.*)}}/g, (match, key) => {
+    const templateWithMeta = this.fillFileMetaTags(combinedData, template );
+
+    return templateWithMeta.replace(/{{(.*)}}/g, (match, key) => {
       if (key.includes('templateImage')) {
         return this.fillFileImagesFromTemplate(combinedData, key);
-      }
-      if (key.includes('meta')) {
-        return this.fillFileMetaTags(combinedData, key);
       }
       if (key.includes('image')) {
         return this.fillFileImages(combinedData, key);
@@ -49,12 +48,14 @@ class PageRenderer {
     return `<img src="data:image/gif;base64,${imageSrc}" alt="${combinedData.templateImages[imageName].alt}"/>`;
   };
 
-  fillFileMetaTags = (combinedData, key) => {
+  fillFileMetaTags = ({meta}, template) => {
     let metaTags = '';
-    Object.keys(combinedData[key]).forEach(value => {
-      metaTags += `<meta name="${value}" content="${combinedData[key][value]}"/>\n`;
+    Object.keys(meta).forEach(value => {
+      metaTags += `<meta name="${value}" content="${meta[value]}"/>\n`;
     });
-    return metaTags;
+
+    return template.replace(/<\/head>/g, `${metaTags}<\/head>`);
+
   };
 
   fillFileImages = (combinedData, key, isThumbnail = false) => {

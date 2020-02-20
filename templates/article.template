@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>{{title}}</title>
-    {{meta}}
 </head>
 <body>
     <img id="image1" src="../../images/square14x14_8bit.bmp" alt="image directly from template"/>
