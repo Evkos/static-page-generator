@@ -49,9 +49,9 @@ class PageGenerationProcess {
     });
 
     eventEmitter.on('page_data_loaded', async (pageData, templateRichData) => {
-      const pageRichData = await dataEnricher.addThumbnails(pageData);
-      const combinedData = dataEnricher.concatData(templateRichData, pageRichData);
-      eventEmitter.emit('combined_data_loaded', combinedData);
+      pageData.images = await dataEnricher.addThumbnails(pageData.images);
+      pageData.templateImages = templateRichData;
+      eventEmitter.emit('combined_data_loaded', pageData);
     });
 
     eventEmitter.on('combined_data_loaded', combinedData => {
