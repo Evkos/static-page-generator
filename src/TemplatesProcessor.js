@@ -3,9 +3,15 @@ const templatesPath = process.env.TEMPLATES_PATH;
 
 class TemplatesProcessor {
 
-  constructor(thumbnailCreator) {
-    this.thumbnailCreator = thumbnailCreator;
-  }
+  getTemplateData = (templateName) => {
+    const template = this.getTemplateByName(templateName);
+    const templateImages = this.getTemplateImages(template);
+    return {
+      templateName,
+      template,
+      templateImages,
+    };
+  };
 
   getTemplatesNames = () => {
     try {
@@ -27,7 +33,7 @@ class TemplatesProcessor {
   };
 
   getTemplateImages = template => {
-    let templateImages = {};
+    const templateImages = {};
     const imagesDataArray = Array.from(template.matchAll(/<img id="(.*)" src="..\/..\/(.*)" alt="(.*)"\/>/g));
 
     if (imagesDataArray) {

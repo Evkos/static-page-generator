@@ -20,19 +20,21 @@ class PageGenerationProcess {
 
   start = () => {
     const templates = templatesProcessor.getTemplatesNames();
-    if (templates) {
+    if (templates.length !== 0) {
       templates.forEach(templateName => {
         eventEmitter.emit('template_read', templateName);
       });
+    }
+    else{
+      console.log("Can't find any templates in folder")
     }
   };
 
   initEventListeners = () => {
 
     eventEmitter.on('template_read', templateName => {
-      const template = templatesProcessor.getTemplateByName(templateName);
-      const templateImages = templatesProcessor.getTemplateImages(template);
-      eventEmitter.emit('template_data_loaded', templateImages, templateName);
+      const templateData = templatesProcessor.getTemplateData(templateName);
+      eventEmitter.emit('template_data_loaded', templateData.templateImages, templateData.templateName);
     });
 
     eventEmitter.on('template_data_loaded', async (templateImages, templateName) => {
