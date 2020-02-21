@@ -2,15 +2,11 @@ const fs = require('fs');
 const publicPath = process.env.PUBLIC_PATH;
 
 class PageRenderer {
-  constructor(templatesProcessor) {
-    this.templatesProcessor = templatesProcessor;
-  }
 
-  render = combinedData => {
+  render = (combinedData, templateData) => {
     const pagePathParts = combinedData.slug.split('/');
     const outputFolderPath = this.createOutputFolder(pagePathParts[0]);
-    const template = this.templatesProcessor.getTemplateBySlug(combinedData.slug);
-    const pageContent = this.createPageContent(template, combinedData);
+    const pageContent = this.createPageContent(templateData.template, combinedData);
 
     this.createPage(outputFolderPath, pagePathParts[1], pageContent);
   };
@@ -26,7 +22,7 @@ class PageRenderer {
 
   createPageContent = (template, combinedData) => {
 
-    const templateWithMeta = this.fillFileMetaTags(combinedData, template );
+    const templateWithMeta = this.fillFileMetaTags(combinedData, template);
 
     return templateWithMeta.replace(/{{(.*)}}/g, (match, key) => {
       if (key.includes('templateImage')) {
@@ -48,7 +44,7 @@ class PageRenderer {
     return `<img src="data:image/gif;base64,${imageSrc}" alt="${combinedData.templateImages[imageName].alt}"/>`;
   };
 
-  fillFileMetaTags = ({meta}, template) => {
+  fillFileMetaTags = ({ meta }, template) => {
     let metaTags = '';
     Object.keys(meta).forEach(value => {
       metaTags += `<meta name="${value}" content="${meta[value]}"/>\n`;

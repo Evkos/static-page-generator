@@ -22,11 +22,6 @@ class TemplatesProcessor {
     }
   };
 
-  getTemplateBySlug = slug => {
-    const templateName = this.getCurrentTemplateName(slug);
-    return this.getTemplateByName(templateName);
-  };
-
   getTemplateByName = name => {
     const buffer = fs.readFileSync(`${templatesPath}/${name}`);
     return buffer.toString();
@@ -45,10 +40,6 @@ class TemplatesProcessor {
       }
     }
     return templateImages;
-  };
-
-  getCurrentTemplateName = slug => {
-    return `${slug.split('/')[0]}.template`;
   };
 }
 
