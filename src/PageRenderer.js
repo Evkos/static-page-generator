@@ -1,12 +1,13 @@
 const fs = require('fs');
+
 const publicPath = process.env.PUBLIC_PATH;
 
 class PageRenderer {
 
-  render = (combinedData, templateData) => {
-    const pagePathParts = combinedData.slug.split('/');
+  render = (pageData, templateData) => {
+    const pagePathParts = pageData.slug.split('/');
     const outputFolderPath = this.createOutputFolder(pagePathParts[0]);
-    const pageContent = this.createPageContent(templateData.template, combinedData);
+    const pageContent = this.createPageContent(templateData, pageData);
 
     this.createPage(outputFolderPath, pagePathParts[1], pageContent);
   };
@@ -20,31 +21,30 @@ class PageRenderer {
     });
   };
 
-  createPageContent = (template, combinedData) => {
-
-    const templateWithMeta = this.fillFileMetaTags(combinedData, template);
+  createPageContent = (templateData, pageData) => {
+    const templateWithMeta = this.fillFileMetaTags(pageData, templateData);
 
     return templateWithMeta.replace(/{{(.*)}}/g, (match, key) => {
       if (key.includes('templateImage')) {
-        return this.fillFileImagesFromTemplate(combinedData, key);
+        return this.fillFileImagesFromTemplate(templateData, key);
       }
       if (key.includes('image')) {
-        return this.fillFileImages(combinedData, key);
+        return this.fillFileImages(pageData, key);
       }
       if (key.includes('thumbnail')) {
-        return this.fillFileImages(combinedData, key, true);
+        return this.fillFileImages(pageData, key, true);
       }
-      return combinedData[key];
+      return pageData[key];
     });
   };
 
-  fillFileImagesFromTemplate = (combinedData, key) => {
+  fillFileImagesFromTemplate = (templateData, key) => {
     const imageName = key.split(':')[1];
-    const imageSrc = combinedData.templateImages[imageName].thumbnail;
-    return `<img src="data:image/gif;base64,${imageSrc}" alt="${combinedData.templateImages[imageName].alt}"/>`;
+    const imageSrc = templateData.templateImages[imageName].thumbnail;
+    return `<img src="data:image/gif;base64,${imageSrc}" alt="${templateData.templateImages[imageName].alt}"/>`;
   };
 
-  fillFileMetaTags = ({ meta }, template) => {
+  fillFileMetaTags = ({ meta }, { template }) => {
     let metaTags = '';
     Object.keys(meta).forEach(value => {
       metaTags += `<meta name="${value}" content="${meta[value]}"/>\n`;

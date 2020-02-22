@@ -53,12 +53,11 @@ class PageGenerationProcess {
 
     eventEmitter.on('page_data_loaded', async (pageData, templateData) => {
       pageData.images = await dataEnricher.addThumbnails(pageData.images);
-      pageData.templateImages = templateData.templateImages;
       eventEmitter.emit('combined_data_loaded', pageData, templateData);
     });
 
-    eventEmitter.on('combined_data_loaded', (combinedData, templateData) => {
-      pageRenderer.render(combinedData, templateData);
+    eventEmitter.on('combined_data_loaded', (pageData, templateData) => {
+      pageRenderer.render(pageData, templateData);
     });
   };
 }
