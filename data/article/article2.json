@@ -1,0 +1,9 @@
+{
+  "slug": "article/article2",
+  "meta": {
+    "title": "second article",
+    "description": "second article desc"
+  },
+  "title": "Our second article",
+  "content": "<h2>This is second article</h2><div> some content</div>"
+}

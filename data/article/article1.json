@@ -1,0 +1,15 @@
+{
+  "slug": "article/article1",
+  "meta": {
+    "title": "test blog article",
+    "description": "for test"
+  },
+  "title": "Our first test article",
+  "content": "<h2>This is first article designed for test</h2><div> some content</div>",
+  "images": {
+    "featuredImage": {
+      "src": "images/rectangle_24bit.bmp",
+      "alt":"t1 rectangle 24bit"
+    }
+  }
+}

@@ -1,0 +1,2 @@
+Use _"start": "set TEMPLATES_PATH=templates&& set PUBLIC_PATH=public&& node index"_ for Windows environment
+Use _"start": "TEMPLATES_PATH=templates PUBLIC_PATH=public node index"_ for Linux environments
